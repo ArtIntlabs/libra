@@ -3,7 +3,7 @@ import fastwer
 import numpy as np
 import sys
 
-THRESHOLD = 30
+THRESHOLD = 60
 FINE_OLD = 5
 
 
@@ -63,7 +63,8 @@ def main(request_text: str) -> dict:
         return {k: v for k, v in sorted(recommendation.items(), key=lambda item: item[1])}
     else:
         result = recommend(request_text)
-        return {result[0]: result[1]}
+        if result:
+            return {result[0]: result[1]}
 
 
 if __name__ == '__main__':
