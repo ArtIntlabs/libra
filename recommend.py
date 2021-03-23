@@ -2,7 +2,7 @@ import pandas as pd
 import fastwer
 import sys
 
-THRESHOLD = 61
+THRESHOLD = 60
 FINE_OLD = 5
 
 
@@ -15,15 +15,9 @@ def preprocessing(path_markup: str = 'MarkupLibra.csv') -> dict:
 def search_idx(text: str, markup: dict, recommend_positions: list) -> list:
     len_text = len(text)
     for sequence, idx in markup.items():
-        if ' ' in sequence:
-            sequence = sequence.split()
-            values = [fastwer.score([word[:len_text]], [text], char_level=True) for word in sequence]
-            if min(values) < THRESHOLD:
-                recommend_positions.append((idx, min(values)))
-        else:
-            value = fastwer.score([sequence[:len_text]], [text], char_level=True)
-            if value < THRESHOLD:
-                recommend_positions.append((idx, value))
+        value = fastwer.score([sequence[:len_text]], [text], char_level=True)
+        if value < THRESHOLD:
+            recommend_positions.append((idx, value))
     return recommend_positions
 
 
@@ -40,12 +34,7 @@ def min_ser_position(positions):
 def recommend(text: str) -> tuple or list:
     markup = preprocessing()
     recommend_positions = []
-    if ' ' in text:
-        for words in text.split():
-            recommend_positions = search_idx(words, markup, recommend_positions)
-    else:
-        recommend_positions = search_idx(text, markup, recommend_positions)
-
+    recommend_positions = search_idx(text, markup, recommend_positions)
     recommend_positions = min_ser_position(recommend_positions)
 
     if recommend_positions[1] != 1000:
